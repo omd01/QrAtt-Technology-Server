@@ -1,5 +1,6 @@
 import { createTransport } from 'nodemailer';
 import { Teacher } from '../models/teachers.js';
+import ejs from "ejs";
 
 
 export const sendMail = async (email, subject, text) => {
@@ -23,8 +24,6 @@ export const sendMail = async (email, subject, text) => {
     });
 }
 
-
-
 export const sendXlsx = async () => {
     const transport = createTransport({
         service: 'gmail',
@@ -46,11 +45,18 @@ export const sendXlsx = async () => {
         email.push(item.email);
     })
 
+    var html
+    var link = "om.com"
+   ejs.renderFile( './templates/xlsxmail.ejs', { link }, async (err, data) => {
+    html = data;
+   })
+
+
     await transport.sendMail({
         from: process.env.SMTP_USER,
         to: email,
         subject,
-        text,
+        html,
         attachments: [
             {
                 filename: filename,
@@ -59,6 +65,8 @@ export const sendXlsx = async () => {
             }
         ]
     });
-
-
 }
+
+
+
+
