@@ -174,55 +174,55 @@ setInterval(async function () {
 
 }, 60 * 60 * 1000);
 
-setInterval(async function () {
+// setInterval(async function () {
 
-    try {
+//     try {
 
-        var data = [];
+//         var data = [];
 
-        const attendence = await Attendence.find();
+//         const attendence = await Attendence.find();
 
-        function attTime(date) {
-            var hours = date.getHours();
-            var minutes = date.getMinutes();
-            var seconds = date.getSeconds();
-            var ampm = hours >= 12 ? 'pm' : 'am';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            minutes = minutes < 10 ? '0' + minutes : minutes;
-            var strTime = `${hours}:${minutes}:${seconds} ${ampm}`;
-            return strTime;
-        }
+//         function attTime(date) {
+//             var hours = date.getHours();
+//             var minutes = date.getMinutes();
+//             var seconds = date.getSeconds();
+//             var ampm = hours >= 12 ? 'pm' : 'am';
+//             hours = hours % 12;
+//             hours = hours ? hours : 12;
+//             minutes = minutes < 10 ? '0' + minutes : minutes;
+//             var strTime = `${hours}:${minutes}:${seconds} ${ampm}`;
+//             return strTime;
+//         }
     
 
-        attendence.forEach((item, index) => {
+//         attendence.forEach((item, index) => {
 
-            data[index] = {
-                Id: item.userId,
-                Name: item.name,
-                Gate: item.gate,
-                Action: item.action,
-                Date: `${item.actionAt.getDate()}/${item.actionAt.getMonth()}/${item.actionAt.getFullYear()}`,
-                Time: attTime(item.actionAt),
-                UniqueCode: item.uniqueCode,
-                Selfi: item.selfi.url
-            }
+//             data[index] = {
+//                 Id: item.userId,
+//                 Name: item.name,
+//                 Gate: item.gate,
+//                 Action: item.action,
+//                 Date: `${item.actionAt.getDate()}/${item.actionAt.getMonth()}/${item.actionAt.getFullYear()}`,
+//                 Time: attTime(item.actionAt),
+//                 UniqueCode: item.uniqueCode,
+//                 Selfi: item.selfi.url
+//             }
 
-        });
+//         });
 
-        const workSheet = XLSX.utils.json_to_sheet(data);
-        const workBook = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(workBook, workSheet, "attendence");
-        fs.mkdirSync("xlsx", (err) => console.log(err))
-        XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
+//         const workSheet = XLSX.utils.json_to_sheet(data);
+//         const workBook = XLSX.utils.book_new()
+//         XLSX.utils.book_append_sheet(workBook, workSheet, "attendence");
+//         fs.mkdirSync("xlsx", (err) => console.log(err))
+//         XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
 
-        await sendXlsx()
+//       //  await sendXlsx()
 
-         fs.rmSync("./xlsx",{recursive:true})
-    }
-    catch (error) {
-        console.log(error)
-    }
+//          fs.rmSync("./xlsx",{recursive:true})
+//     }
+//     catch (error) {
+//         console.log(error)
+//     }
 
-}, 10 * 1000);
+// }, 10 * 1000);
 
