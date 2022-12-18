@@ -227,3 +227,55 @@ schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
     }
 
 })
+
+// schedule.scheduleJob("*/10 * * * * *", async() =>{
+//     try {
+
+//         var data = [];
+
+//         const attendence = await Attendence.find();
+
+//         function attTime(date) {
+//             var hours = date.getHours();
+//             var minutes = date.getMinutes();
+//             var seconds = date.getSeconds();
+//             var ampm = hours >= 12 ? 'pm' : 'am';
+//             hours = hours % 12;
+//             hours = hours ? hours : 12;
+//             minutes = minutes < 10 ? '0' + minutes : minutes;
+//             var strTime = `${hours}:${minutes}:${seconds} ${ampm}`;
+//             return strTime;
+//         }
+    
+
+//         attendence.forEach((item, index) => {
+
+//             data[index] = {
+//                 Id: item.userId,
+//                 Name: item.name,
+//                 Gate: item.gate,
+//                 Action: item.action,
+//                 Date: `${item.actionAt.getDate()}/${item.actionAt.getMonth()}/${item.actionAt.getFullYear()}`,
+//                 Time: attTime(item.actionAt),
+//                 UniqueCode: item.uniqueCode,
+//                 Selfi: item.selfi.url
+//             }
+
+//         });
+
+//         const workSheet = XLSX.utils.json_to_sheet(data);
+//         const workBook = XLSX.utils.book_new()
+//         XLSX.utils.book_append_sheet(workBook, workSheet, "attendence");
+//         fs.mkdirSync("xlsx", (err) => console.log(err))
+//         XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
+
+//         await sendXlsx()
+//         fs.rmSync("./xlsx",{recursive:true})
+
+//          console.log("XLSX");
+//     }
+//     catch (error) {
+//         console.log(error)
+//     }
+
+// })
