@@ -14,33 +14,16 @@ export const sendMail = async (email, subject, text) => {
         },
     });
 
-    if (file) {
-        console.log(email);
-        await transport.sendMail({
-            from: process.env.SMTP_USER,
-            to: email,
-            subject,
-            text,
-            attachments: [
-                {
-                    filename: "data.xlsx",
-                    path: "./xlsx/data.xlsx",
-                    cid: "unique-data.xlsx"
-                }
-            ]
-        });
 
-    }
-    else {
-        await transport.sendMail({
-            from: process.env.SMTP_USER,
-            to: email,
-            subject,
-            text,
-        });
-    }
-
+    await transport.sendMail({
+        from: process.env.SMTP_USER,
+        to: email,
+        subject,
+        text,
+    });
 }
+
+
 
 export const sendXlsx = async () => {
     const transport = createTransport({
@@ -77,5 +60,5 @@ export const sendXlsx = async () => {
         ]
     });
 
-   
+
 }
