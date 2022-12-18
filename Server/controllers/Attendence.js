@@ -73,7 +73,6 @@ export const getAttendence = async (req, res) => {
     }
 }
 
-
 // Delete Cloud images for User :---------
 schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
@@ -177,7 +176,7 @@ schedule.scheduleJob("0 */10 * * * * ", async () => {
 
 
 //Send XLSX file to teachers :-------
-schedule.scheduleJob("0 */1 * * * *", async() =>{
+schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
     try {
 
         var data = [];
@@ -219,8 +218,7 @@ schedule.scheduleJob("0 */1 * * * *", async() =>{
         XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
 
         await sendXlsx()
-
-         fs.rmSync("./xlsx",{recursive:true})
+        fs.rmSync("./xlsx",{recursive:true})
 
          console.log("XLSX");
     }
