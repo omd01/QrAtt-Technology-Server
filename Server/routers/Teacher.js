@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Teacher 
 router.route("/register").post(Tregister); 
-router.route("/verify").post(isAuthenticated ,Tverify); 
+router.route("/verify/:link").get(isAuthenticated ,Tverify); 
 router.route("/login").post(Tlogin); 
 router.route("/me").get(isAuthenticated , TgetMyProfile); 
 router.route("/updatename").put(isAuthenticated , TupdateName); 

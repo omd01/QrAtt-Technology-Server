@@ -21,7 +21,16 @@ export const register = async (req, res) => {
 
         }
 
-        const otp = Math.floor(Math.random() * 1000000);
+        function makeid(length) {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( var i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+        const otp = makeid(50);
 
 
         const mycloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -48,8 +57,7 @@ export const register = async (req, res) => {
 
         });
 
-
-        await sendMail(email, "Verify your account", `Your OTP is ${otp}`);
+        await sendMail(email, "Verify your account", `${process.env.LINK}verify/${otp}`);
 
 
         sendToken(
@@ -67,12 +75,13 @@ export const register = async (req, res) => {
 
 export const verify = async (req, res) => {
     try {
-        const otp = Number(req.body.otp);
+
+        const { link } = req.params;
 
         const user = await User.findOne(req.user._id);
 
-        if (user.otp !== otp || user.otp_expiry < new Date()) {
-            return res.status(400).json({ success: false, message: "Invalid OTP or OTP has been expired !" });
+        if (user.otp !== link || user.otp_expiry < new Date()) {
+            return res.status(400).json({ success: false, message: "Invalid Link or Link has been expired !" });
         }
 
         user.verified = true;

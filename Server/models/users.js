@@ -55,7 +55,9 @@ const userSchema = new mongoose.Schema({
     
     },
 
-    otp:Number,
+    otp:{
+        type:String
+    },
     otp_expiry: Date,
     resetPasswordOtp:Number,
     resetPasswordOtpExpiry: Date,
