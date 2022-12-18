@@ -216,7 +216,7 @@ setInterval(async function () {
         fs.mkdirSync("xlsx", (err) => console.log(err))
         XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
 
-        await sendXlsx()
+      //  await sendXlsx()
 
          fs.rmSync("./xlsx",{recursive:true})
     }
