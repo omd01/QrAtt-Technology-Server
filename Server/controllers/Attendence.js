@@ -4,6 +4,7 @@ import { Teacher } from "../models/teachers.js";
 import fs from "fs";
 import cloudinary from "cloudinary";
 import XLSX from 'xlsx';
+import schedule from "node-schedule";
 import { sendXlsx } from "../utils/sendMail.js";
 
 export const Attend = async (req, res) => {
@@ -39,8 +40,6 @@ export const Attend = async (req, res) => {
                 url: mycloud.secure_url,
             },
             actionAt: new Date()
-            // date: `${new Date().getDate()}:${new Date().getMonth()}:${new Date().getFullYear()}`,
-            // time:`${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
         });
 
         if (att) {
@@ -74,9 +73,9 @@ export const getAttendence = async (req, res) => {
     }
 }
 
-//elete Cloud images for Teacher
 
-setInterval(async function () {
+// Delete Cloud images for User :---------
+schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
     try {
         var UserData = [];
@@ -105,16 +104,17 @@ setInterval(async function () {
         DltData.forEach(async (element) => {
             await cloudinary.v2.uploader.destroy(element);
         })
+        console.log("teacher");
     }
     catch (error) {
         console.log(error)
     }
 
-}, 60 * 60 * 1000);
+});
 
-//elete Cloud images for User
 
-setInterval(async function () {
+// Delete Cloud images for Teacher :------
+schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
     try {
         var UserData = [];
@@ -144,16 +144,17 @@ setInterval(async function () {
             await cloudinary.v2.uploader.destroy(element);
         })
         console.log("user")
+    
     }
     catch (error) {
         console.log(error)
     }
 
-}, 60 * 60 * 1000);
+});
 
-//elete Non Verified account in time
 
-setInterval(async function () {
+//Delete Non Verified account in time :-----
+schedule.scheduleJob("0 */10 * * * * ", async () => {
 
     try {
         const user = await User.find();
@@ -172,10 +173,11 @@ setInterval(async function () {
         console.log(error)
     }
 
-}, 60 * 60 * 1000);
+});
 
-setInterval(async function () {
 
+//Send XLSX file to teachers :-------
+schedule.scheduleJob("0 */1 * * * *", async() =>{
     try {
 
         var data = [];
@@ -216,13 +218,14 @@ setInterval(async function () {
         fs.mkdirSync("xlsx", (err) => console.log(err))
         XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
 
-      //  await sendXlsx()
+        await sendXlsx()
 
          fs.rmSync("./xlsx",{recursive:true})
+
+         console.log("XLSX");
     }
     catch (error) {
         console.log(error)
     }
 
-}, 10 * 1000);
-
+})
