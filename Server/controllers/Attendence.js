@@ -73,7 +73,7 @@ export const getAttendence = async (req, res) => {
     }
 }
 
-// Delete Cloud images for User :---------
+// Delete Cloud images for User ( 1 hour ):---------
 schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
     try {
@@ -112,7 +112,7 @@ schedule.scheduleJob("0 0 */1 * * * ", async () => {
 });
 
 
-// Delete Cloud images for Teacher :------
+// Delete Cloud images for Teacher (1 hour):------
 schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
     try {
@@ -152,7 +152,7 @@ schedule.scheduleJob("0 0 */1 * * * ", async () => {
 });
 
 
-//Delete Non Verified account in time :-----
+//Delete Non Verified account in time (10 minuits):-----
 schedule.scheduleJob("0 */10 * * * * ", async () => {
 
     try {
@@ -175,7 +175,7 @@ schedule.scheduleJob("0 */10 * * * * ", async () => {
 });
 
 
-//Send XLSX file to teachers :-------
+//Send XLSX file to teachers (1 Month):-------
 schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
     try {
 
