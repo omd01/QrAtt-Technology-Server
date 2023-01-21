@@ -39,7 +39,7 @@ export const register = async (req, res) => {
             height: "1080"
         });
 
-        fs.rmSync("./tmp", { recursive: true });
+        fs.rmSync(avatar, { recursive: true });
 
         user = await User.create({
             name,
@@ -57,7 +57,7 @@ export const register = async (req, res) => {
 
         });
 
-        await sendMail(email, "Verify your account", `${process.env.LINK}verify/${otp}`);
+        await sendMail(email, "Verify your account", `${process.env.LINK}verify/${otp}`,user.name);
 
 
         sendToken(

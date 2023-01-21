@@ -44,7 +44,7 @@ export const Tregister = async (req, res) => {
             height: "1080"
         });
 
-        fs.rmSync("./tmp", { recursive: true });
+        fs.rmSync(avatar, { recursive: true });
 
         user = await Teacher.create({
             name,

@@ -3,7 +3,7 @@ import { Teacher } from '../models/teachers.js';
 import ejs from "ejs";
 
 
-export const sendMail = async (email, subject, text) => {
+export const sendMail = async (email, subject, link,username) => {
     const transport = createTransport({
         service: 'gmail',
         host: process.env.SMTP_HOST,
@@ -16,11 +16,17 @@ export const sendMail = async (email, subject, text) => {
     });
 
 
+    var html
+   ejs.renderFile( './templates/verify.ejs', { link ,username}, async (err, data) => {
+    html = data;
+   })
+
+
     await transport.sendMail({
         from: process.env.SMTP_USER,
         to: email,
         subject,
-        text,
+        html,
     });
 }
 
@@ -38,16 +44,15 @@ export const sendXlsx = async () => {
 
     const teacher = await Teacher.find();
     var email = [];
-    const subject = "test mail to text it works or not";
-    const text = "test text for xlsx files";
-    const filename = `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}-sheet.xlsx`
+    const subject = `Subject: Monthly Student Data - ${new Date().toLocaleDateString()}`;
+
+    const filename = `${new Date().toLocaleDateString()}-sheet.xlsx`
     teacher.forEach(item => {
         email.push(item.email);
     })
 
     var html
-    var link = "om.com"
-   ejs.renderFile( './templates/xlsxmail.ejs', { link }, async (err, data) => {
+   ejs.renderFile( './templates/monthly.ejs', async (err, data) => {
     html = data;
    })
 
