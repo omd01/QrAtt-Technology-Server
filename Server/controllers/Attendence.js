@@ -72,6 +72,39 @@ export const getAttendence = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 }
+export const getMyAttendence = async (req, res) => {
+
+    try {
+
+        const user = await User.findOne(req.user._id);
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Access Denied" });
+        }
+
+        const data = await Attendence.find({})
+
+        var myAtt =[]
+
+        data.forEach(element => {
+            if(element.userId == user._id){
+                myAtt.push({
+                    _id:element._id,
+                    gate:element.gate,
+                    action:element.action,
+                    actionAt:element.actionAt
+                })
+            }
+        });
+
+        console.log(myAtt);
+
+        return res.status(200).json({ success: true, myAtt });
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
 
 // Delete Cloud images for User ( 1 hour ):---------
 schedule.scheduleJob("0 0 */1 * * * ", async () => {
