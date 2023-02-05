@@ -42,7 +42,10 @@ const userSchema = new mongoose.Schema({
         required:true,
     },
     
-    
+    branch:{
+        type:String,
+        require:true,
+    },
 
     createdAt: {
         type: Date,

@@ -8,7 +8,7 @@ export const register = async (req, res) => {
 
     try {
 
-        const { name, email, password, mobile, parentsMob, roomNo } = req.body;
+        const { name, email, password, mobile, parentsMob, roomNo ,branch} = req.body;
 
         const avatar = req.files.avatar.tempFilePath;
 
@@ -52,6 +52,7 @@ export const register = async (req, res) => {
             mobile,
             parentsMob,
             roomNo,
+            branch,
             otp,
             otp_expiry: new Date(Date.now() + process.env.OTP_EXPIRE * 60 * 1000),
 
