@@ -6,7 +6,7 @@ export const newLeav = async (req, res) => {
 
     try {
 
-        const { teacher, reason } = req.body;
+        const { teacher, reason,from,to } = req.body;
         const user = await User.findById(req.user._id);
 
         const leav = await Leav.create({
@@ -14,8 +14,8 @@ export const newLeav = async (req, res) => {
             name: user.name,
             teacher,
             reason,
-            from: new Date(Date.now()),
-            to: new Date(Date.now(5 * 24 * 60 * 60 * 1000)),
+            from ,
+            to,
             status: "pending",
             createdAt: new Date(Date.now()),
 
