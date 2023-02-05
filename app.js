@@ -23,5 +23,8 @@ app.use("/api/v1/teacher", Teacher);
 app.use("/api/v1/leav", Leav);
 app.use("/api/v1/attendence", Attendence);
 
+app.get("/", (req, res) => {
+    res.send("Welcom To QrAll Technology")
+})
 
 
