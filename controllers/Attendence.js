@@ -18,7 +18,7 @@ export const Attend = async (req, res) => {
         const avatar = req.files.avatar.tempFilePath;
 
         if (process.env.UNIQUE_CODE !== uniqueCode) {
-            return res.status(400).json({ success: false, error: "Wrong QR code" });
+            return res.status(400).json({ success: false, message: "Use Scaned Wrong QR code!" });
         }
 
         const mycloud = await cloudinary.v2.uploader.upload(avatar, {
