@@ -210,7 +210,7 @@ export const updateAvatar = async (req, res) => {
                 crop: "fill"
             });
 
-            fs.rmSync("./tmp", { recursive: true });
+            fs.rmSync(avatar, { recursive: true });
 
             user.avatar = {
                 public_id: mycloud.public_id,
