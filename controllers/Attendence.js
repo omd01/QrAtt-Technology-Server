@@ -18,6 +18,7 @@ export const Attend = async (req, res) => {
         const avatar = req.files.avatar.tempFilePath;
 
         if (process.env.UNIQUE_CODE !== uniqueCode) {
+            fs.rmSync(avatar, { recursive: true });
             return res.status(400).json({ success: false, message: "Use Scaned Wrong QR code!" });
         }
 
@@ -27,7 +28,7 @@ export const Attend = async (req, res) => {
             height: "1080"
         });
 
-        fs.rmSync("./tmp", { recursive: true });
+        fs.rmSync(avatar, { recursive: true });
 
         const att = await Attendence.create({
             userId: user._id,
