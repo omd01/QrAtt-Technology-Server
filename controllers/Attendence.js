@@ -83,13 +83,13 @@ export const getMyAttendence = async (req, res) => {
             return res.status(400).json({ success: false, message: "Access Denied" });
         }
 
-        const data = await Attendence.find({})
+        const Olddata = await Attendence.find({})
 
-        var myAtt =[]
+        var data =[]
 
-        data.forEach(element => {
+        Olddata.forEach(element => {
             if(element.userId == user._id){
-                myAtt.push({
+                data.push({
                     _id:element._id,
                     gate:element.gate,
                     action:element.action,
@@ -98,9 +98,8 @@ export const getMyAttendence = async (req, res) => {
             }
         });
 
-        console.log(myAtt);
 
-        return res.status(200).json({ success: true, myAtt });
+        return res.status(200).json({ success: true, data });
 
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
