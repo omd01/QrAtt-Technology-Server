@@ -3,7 +3,7 @@ import { Teacher } from '../models/teachers.js';
 import ejs from "ejs";
 
 
-export const sendMail = async (email, subject, link,username) => {
+export const sendMail = async (email, subject, OTP,username) => {
     const transport = createTransport({
         service: 'gmail',
         host: process.env.SMTP_HOST,
@@ -17,7 +17,7 @@ export const sendMail = async (email, subject, link,username) => {
 
 
     var html
-   ejs.renderFile( './templates/verify.ejs', { link ,username}, async (err, data) => {
+   ejs.renderFile( './templates/verify.ejs', { OTP ,username}, async (err, data) => {
     html = data;
    })
 

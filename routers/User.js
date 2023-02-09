@@ -8,7 +8,7 @@ const router = express.Router();
 
 // Student 
 router.route("/register").post(register); 
-router.route("/verify/:link").get(isAuthenticated ,verify); 
+router.route("/verify").post(isAuthenticated ,verify); 
 router.route("/login").post(login); 
 router.route("/me").get(isAuthenticated , getMyProfile); 
 router.route("/updatename").put(isAuthenticated , updateName); 
