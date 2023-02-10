@@ -30,6 +30,33 @@ export const sendMail = async (email, subject, OTP,username) => {
     });
 }
 
+export const sendMailForResetPassword = async (email, subject, OTP,username) => {
+    const transport = createTransport({
+        service: 'gmail',
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASSWORD,
+
+        },
+    });
+
+
+    var html
+   ejs.renderFile( './templates/resetPassword.ejs', { OTP ,username }, async (err, data) => {
+    html = data;
+   })
+
+
+    await transport.sendMail({
+        from: process.env.SMTP_USER,
+        to: email,
+        subject,
+        html,
+    });
+}
+
 export const sendXlsx = async () => {
     const transport = createTransport({
         service: 'gmail',
