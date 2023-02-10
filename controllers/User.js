@@ -56,7 +56,7 @@ export const register = async (req, res) => {
             res,
             user
             , 201,
-            "OTP has been sent to your email adress, please verify your account"
+            `${(user.name).split(" ")[0]} welcome to QrAtt !`
         );
 
 
@@ -121,7 +121,7 @@ export const login = async (req, res) => {
             res,
             user,
             200,
-            "Login Successful"
+            `Welcome back ${(user.name).split(" ")[0]}` 
 
         );
 
