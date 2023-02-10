@@ -1,5 +1,5 @@
 import { User } from "../models/users.js";
-import { sendMail } from "../utils/sendMail.js";
+import { sendMail, sendMailForResetPassword } from "../utils/sendMail.js";
 import { sendToken } from "../utils/sendToken.js";
 import cloudinary from "cloudinary";
 import fs from "fs";
@@ -145,7 +145,6 @@ export const logout = async (req, res) => {
     }
 }
 
-
 export const getMyProfile = async (req, res) => {
 
     try {
@@ -175,7 +174,35 @@ export const updateName = async (req, res) => {
         if (name) user.name = name;
         await user.save()
 
-        res.status(200).json({ success: true, message: "Name Updated Successfully" });
+        // res.status(200).json({ success: true, message: "Name Updated Successfully" ,user});
+        sendToken(
+            res,
+            user,
+            200,
+            `Name updated !`
+        );
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+export const updateRoom = async (req, res) => {
+    try {
+
+        const user = await User.findById(req.user._id);
+
+        const { roomNo } = req.body;
+        if (roomNo) user.roomNo = roomNo;
+        await user.save()
+
+        // res.status(200).json({ success: true, message: "Name Updated Successfully" ,user});
+        sendToken(
+            res,
+            user,
+            200,
+            `Room no updated !`
+        );
 
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -210,7 +237,13 @@ export const updateAvatar = async (req, res) => {
 
         await user.save()
 
-        res.status(200).json({ success: true, message: "Profile Updated Successfully" });
+        // res.status(200).json({ success: true, message: "Profile Updated Successfully" });
+        sendToken(
+            res,
+            user,
+            201,
+            `Profile Updated Successfully`
+        );
 
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -261,8 +294,7 @@ export const forgetPassword = async (req, res) => {
         user.resetPasswordOtpExpiry = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        await sendMail(email, "Request for Reseting Otp", `Your OTP is ${otp}`
-        );
+        await sendMailForResetPassword(email, "Request for reseting password", otp,user.name);
 
 
 
