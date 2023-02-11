@@ -1,14 +1,15 @@
 import { Leav } from "../models/leav.js";
 import { Teacher } from "../models/teachers.js";
 import { User } from "../models/users.js";
+import axios from "axios";
 
 export const newLeav = async (req, res) => {
 
     try {
 
         const { teacher, reason,from,to } = req.body;
+        const AssignedTeacher = await Teacher.findById(teacher);
         const user = await User.findById(req.user._id);
-
         const leav = await Leav.create({
             userId: user._id,
             name: user.name,
@@ -22,6 +23,12 @@ export const newLeav = async (req, res) => {
         });
         if (leav) {
             res.status(200).json({ success: true, message: "Leav Request sent successfully " });
+
+           const status =   await axios.post("https://exp.host/--/api/v2/push/send", {
+                to: AssignedTeacher.token,
+                title: "New Leave Request",
+                body: "You have a new leave request from " + user.name,
+            })
         }
 
 
