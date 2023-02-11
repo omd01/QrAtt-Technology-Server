@@ -141,6 +141,39 @@ export const Tlogin = async (req, res) => {
     }
 }
 
+export const TexpoPushToken = async (req, res) => {
+    try {
+
+        const user = await Teacher.findById(req.user._id);
+
+        const { token } = req.body;
+
+        if (token) {
+
+            if(user.token === null){
+                user.token = token;
+                await user.save()
+                return res.status(200).json({ success: true, message: "Token added Successfully" });
+
+            }
+        
+            if(user.token !== token){
+                user.token = token;
+                await user.save()
+                return res.status(200).json({ success: true, message: "Token updated Successfully" });
+            }
+
+            if(user.token === token){
+                return res.status(200).json({ success: true, message: "Token already exist" });
+            }
+        } 
+        
+        return res.status(400).json({ success: false, message: "Token not provided" });
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
 
 export const TgetMyProfile = async (req, res) => {
 

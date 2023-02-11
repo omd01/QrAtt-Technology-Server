@@ -47,6 +47,11 @@ const userSchema = new mongoose.Schema({
         default: false,
     
     },
+    token:{
+        type:String,
+        default:null,
+    },
+
 
     otp:String,
     otp_expiry: Date,
