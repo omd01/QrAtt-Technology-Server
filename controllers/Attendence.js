@@ -106,164 +106,110 @@ export const getMyAttendence = async (req, res) => {
     }
 }
 
-// Delete Cloud images for User ( 1 hour ):---------
-schedule.scheduleJob("0 0 */1 * * * ", async () => {
+// // Delete Cloud images for User ( 1 hour ):---------
+// schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
-    try {
-        var UserData = [];
-        var CloudData = [];
-        const result = await cloudinary.v2.api.resources({
-            type: 'upload',
-            prefix: 'QrAtt/user'
-        });
+//     try {
+//         var UserData = [];
+//         var CloudData = [];
+//         const result = await cloudinary.v2.api.resources({
+//             type: 'upload',
+//             prefix: 'QrAtt/user'
+//         });
 
-        if (result) {
-            result.resources.forEach(element => {
-                CloudData.push(element.public_id)
-            });
+//         if (result) {
+//             result.resources.forEach(element => {
+//                 CloudData.push(element.public_id)
+//             });
 
-            const user = await User.find();
-            user.forEach(element => {
-                UserData.push(element.avatar.public_id);
-            });
+//             const user = await User.find();
+//             user.forEach(element => {
+//                 UserData.push(element.avatar.public_id);
+//             });
 
-        }
-        const DltData = CloudData.filter((link) => {
-            return !UserData.find((element) => {
-                return element === link
-            });
-        })
-        DltData.forEach(async (element) => {
-            await cloudinary.v2.uploader.destroy(element);
-        })
-        console.log("teacher");
-    }
-    catch (error) {
-        console.log(error)
-    }
+//         }
+//         const DltData = CloudData.filter((link) => {
+//             return !UserData.find((element) => {
+//                 return element === link
+//             });
+//         })
+//         DltData.forEach(async (element) => {
+//             await cloudinary.v2.uploader.destroy(element);
+//         })
+//         console.log("teacher");
+//     }
+//     catch (error) {
+//         console.log(error)
+//     }
 
-});
+// });
 
 
-// Delete Cloud images for Teacher (1 hour):------
-schedule.scheduleJob("0 0 */1 * * * ", async () => {
+// // Delete Cloud images for Teacher (1 hour):------
+// schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
-    try {
-        var UserData = [];
-        var CloudData = [];
-        const result = await cloudinary.v2.api.resources({
-            type: 'upload',
-            prefix: 'QrAtt/teacher'
-        });
+//     try {
+//         var UserData = [];
+//         var CloudData = [];
+//         const result = await cloudinary.v2.api.resources({
+//             type: 'upload',
+//             prefix: 'QrAtt/teacher'
+//         });
 
-        if (result) {
-            result.resources.forEach(element => {
-                CloudData.push(element.public_id)
-            });
+//         if (result) {
+//             result.resources.forEach(element => {
+//                 CloudData.push(element.public_id)
+//             });
 
-            const user = await Teacher.find();
-            user.forEach(element => {
-                UserData.push(element.avatar.public_id);
-            });
+//             const user = await Teacher.find();
+//             user.forEach(element => {
+//                 UserData.push(element.avatar.public_id);
+//             });
 
-        }
-        const DltData = CloudData.filter((link) => {
-            return !UserData.find((element) => {
-                return element === link
-            });
-        })
-        DltData.forEach(async (element) => {
-            await cloudinary.v2.uploader.destroy(element);
-        })
-        console.log("user")
+//         }
+//         const DltData = CloudData.filter((link) => {
+//             return !UserData.find((element) => {
+//                 return element === link
+//             });
+//         })
+//         DltData.forEach(async (element) => {
+//             await cloudinary.v2.uploader.destroy(element);
+//         })
+//         console.log("user")
     
-    }
-    catch (error) {
-        console.log(error)
-    }
+//     }
+//     catch (error) {
+//         console.log(error)
+//     }
 
-});
-
-
-//Delete Non Verified account in time (10 minuits):-----
-schedule.scheduleJob("0 */10 * * * * ", async () => {
-
-    try {
-        const user = await User.find();
-        user.forEach(element => {
-            if (!element.verified) {
-                if (element.otp_expiry < new Date(Date.now())) {
-                    async function dlt() {
-                        await User.findByIdAndRemove(element._id)
-                    }
-                    dlt()
-                }
-            }
-        });
-    }
-    catch (error) {
-        console.log(error)
-    }
-
-});
+// });
 
 
-//Send XLSX file to teachers (1 Month):-------
-schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
-    try {
+// //Delete Non Verified account in time (10 minuits):-----
+// schedule.scheduleJob("0 */10 * * * * ", async () => {
 
-        var data = [];
+//     try {
+//         const user = await User.find();
+//         user.forEach(element => {
+//             if (!element.verified) {
+//                 if (element.otp_expiry < new Date(Date.now())) {
+//                     async function dlt() {
+//                         await User.findByIdAndRemove(element._id)
+//                     }
+//                     dlt()
+//                 }
+//             }
+//         });
+//     }
+//     catch (error) {
+//         console.log(error)
+//     }
 
-        const attendence = await Attendence.find();
-
-        // function attTime(date) {
-        //     var hours = date.getHours();
-        //     var minutes = date.getMinutes();
-        //     var seconds = date.getSeconds();
-        //     var ampm = hours >= 12 ? 'pm' : 'am';
-        //     hours = hours % 12;
-        //     hours = hours ? hours : 12;
-        //     minutes = minutes < 10 ? '0' + minutes : minutes;
-        //     var strTime = `${hours}:${minutes}:${seconds} ${ampm}`;
-        //     return strTime;
-        // }
-    
-
-        attendence.forEach((item, index) => {
-
-            data[index] = {
-                Id: item.userId,
-                Name: item.name,
-                Gate: item.gate,
-                Action: item.action,
-                Date: item.actionAt.toLocaleDateString(),
-                Time: item.actionAt.toLocaleTimeString(),
-                UniqueCode: item.uniqueCode,
-                Selfi: item.selfi.url
-            }
-
-        });
-
-        const workSheet = XLSX.utils.json_to_sheet(data);
-        const workBook = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(workBook, workSheet, "attendence");
-        fs.mkdirSync("xlsx", (err) => console.log(err))
-        XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
-
-        await sendXlsx()
-        fs.rmSync("./xlsx",{recursive:true})
-
-         console.log("XLSX");
-    }
-    catch (error) {
-        console.log(error)
-    }
-
-})
+// });
 
 
-
-// schedule.scheduleJob("*/10 * * * * *", async() =>{
+// //Send XLSX file to teachers (1 Month):-------
+// schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
 //     try {
 
 //         var data = [];
@@ -314,3 +260,4 @@ schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
 //     }
 
 // })
+
