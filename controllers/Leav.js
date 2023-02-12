@@ -24,9 +24,9 @@ export const newLeav = async (req, res) => {
         if (leav) {
             res.status(200).json({ success: true, message: "Leav Request sent successfully " });
 
-           const status =   await axios.post("https://exp.host/--/api/v2/push/send", {
+            await axios.post("https://exp.host/--/api/v2/push/send", {
                 to: AssignedTeacher.token,
-                title: "New Leave Request",
+                title: "🟡 New Leave Request",
                 body: "You have a new leave request from " + user.name,
             })
         }
@@ -102,17 +102,25 @@ export const approveLeav = async (req, res) => {
     try {
 
         const { leavId } = req.params;
-
-       
+  
         const user = await Teacher.findById(req.user._id);
 
 
         if (user.isTeacher) {
             const leav = await Leav.findById(leavId);
+            const student = await User.findById(leav.userId);
             if (leav) {
                 leav.status = "approved";
                 await leav.save();
+
+                await axios.post("https://exp.host/--/api/v2/push/send", {
+                    to: student.token,
+                    title: "🟢 Leave Request Approved ",
+                    body: "Your leave request was approved by " + user.name,
+                })
+                
                 return res.status(200).json({ success: true, message: "Request Approved" });
+
             }
             return res.status(400).json({ success: false, message: "Cannot Find Request" });
         };
@@ -140,8 +148,14 @@ export const rejectLeav = async (req, res) => {
         };
 
         if (leav) {
+            const student = await User.findById(leav.userId);
             leav.status = "rejected";
             await leav.save();
+            await axios.post("https://exp.host/--/api/v2/push/send", {
+                    to: student.token,
+                    title: "🔴 Leave Request Rejected ",
+                    body: "Your leave request was rejected by " + user.name,
+                })
             return res.status(200).json({ success: true, message: "Request Rejected" });
         }
 
