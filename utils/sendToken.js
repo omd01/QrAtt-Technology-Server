@@ -14,6 +14,8 @@ export const sendToken =(res,user,statusCode,message) =>{
         avatar : user.avatar,
         mobile : user.mobile,
         parentsMob : user.parentsMob,
+        roomNo:user.roomNo,
+        branch:user.branch,
         verified : user.verified,
         isTeacher : user.isTeacher,
         isAdmin: user.isAdmin,

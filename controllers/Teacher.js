@@ -27,7 +27,16 @@ export const Tregister = async (req, res) => {
 
         }
 
-        const otp = Math.floor(Math.random() * 1000000);
+        function makeid(length) {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( var i = 0; i < length; i++ ) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+        const otp = makeid(50);
 
         const mycloud = await cloudinary.v2.uploader.upload(avatar, {
             folder: "QrAtt/teacher",
@@ -35,7 +44,7 @@ export const Tregister = async (req, res) => {
             height: "1080"
         });
 
-        fs.rmSync("./tmp", { recursive: true });
+        fs.rmSync(avatar, { recursive: true });
 
         user = await Teacher.create({
             name,
@@ -52,7 +61,7 @@ export const Tregister = async (req, res) => {
         });
 
 
-        await sendMail(email, "Verify your account", `Your OTP is ${otp}`);
+        await sendMail(email, "Verify your account", `${process.env.LINK}teacher/verify/${otp}`);
 
         sendToken(
             res,
@@ -69,14 +78,14 @@ export const Tregister = async (req, res) => {
 
 export const Tverify = async (req, res) => {
     try {
-        const otp = Number(req.body.otp);
+        const { link } = req.params;
 
         const user = await Teacher.findOne(req.user._id);
 
-        if (user.otp !== otp || user.otp_expiry < new Date()) {
-            return res.status(400).json({ success: false, message: "Invalid OTP or has been expired" });
+        if (user.otp !== link || user.otp_expiry < new Date()) {
+            return res.status(400).json({ success: false, message: "Invalid Link or Link has been expired !" });
         }
-
+        
         user.verified = true;
         user.otp_expiry = null;
         user.otp = null;
@@ -132,6 +141,39 @@ export const Tlogin = async (req, res) => {
     }
 }
 
+export const TexpoPushToken = async (req, res) => {
+    try {
+
+        const user = await Teacher.findById(req.user._id);
+
+        const { token } = req.body;
+
+        if (token) {
+
+            if(user.token === null){
+                user.token = token;
+                await user.save()
+                return res.status(200).json({ success: true, message: "Token added Successfully" });
+
+            }
+        
+            if(user.token !== token){
+                user.token = token;
+                await user.save()
+                return res.status(200).json({ success: true, message: "Token updated Successfully" });
+            }
+
+            if(user.token === token){
+                return res.status(200).json({ success: true, message: "Token already exist" });
+            }
+        } 
+        
+        return res.status(400).json({ success: false, message: "Token not provided" });
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
 
 export const TgetMyProfile = async (req, res) => {
 
@@ -186,7 +228,7 @@ export const TupdateAvatar = async (req, res) => {
                 crop: "limit"
             });
 
-            fs.rmSync("./tmp", { recursive: true });
+            fs.rmSync(avatar, { recursive: true });
 
             user.avatar = {
                 public_id: mycloud.public_id,

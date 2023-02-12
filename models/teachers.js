@@ -47,8 +47,13 @@ const userSchema = new mongoose.Schema({
         default: false,
     
     },
+    token:{
+        type:String,
+        default:null,
+    },
 
-    otp:Number,
+
+    otp:String,
     otp_expiry: Date,
     resetPasswordOtp:Number,
     resetPasswordOtpExpiry: Date,
@@ -78,8 +83,5 @@ userSchema.methods.comparePassword = async function(password){
   return await bcrypt.compare(password, this.password);
     
 };
-
-
-
 
 export const Teacher = mongoose.model("Teacher", userSchema,"Teacher");

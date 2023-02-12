@@ -1,5 +1,12 @@
+<<<<<<< HEAD
 node_modules
 config/config.env
 xlsx
 temp
+=======
+/node_modules
+/config/config.env
+/xlsx
+/temp
+>>>>>>> 0.2.3
 

@@ -42,7 +42,10 @@ const userSchema = new mongoose.Schema({
         required:true,
     },
     
-    
+    branch:{
+        type:String,
+        require:true,
+    },
 
     createdAt: {
         type: Date,
@@ -52,7 +55,11 @@ const userSchema = new mongoose.Schema({
     verified:{
         type: Boolean,
         default: false,
-    
+    },
+
+    token:{
+        type:String,
+        default:null,
     },
 
     otp:Number,

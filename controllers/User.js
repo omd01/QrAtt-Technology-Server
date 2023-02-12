@@ -1,5 +1,5 @@
 import { User } from "../models/users.js";
-import { sendMail } from "../utils/sendMail.js";
+import { sendMail, sendMailForResetPassword } from "../utils/sendMail.js";
 import { sendToken } from "../utils/sendToken.js";
 import cloudinary from "cloudinary";
 import fs from "fs";
@@ -8,7 +8,7 @@ export const register = async (req, res) => {
 
     try {
 
-        const { name, email, password, mobile, parentsMob, roomNo } = req.body;
+        const { name, email, password, mobile, parentsMob, roomNo ,branch} = req.body;
 
         const avatar = req.files.avatar.tempFilePath;
 
@@ -30,7 +30,7 @@ export const register = async (req, res) => {
             height: "1080"
         });
 
-        fs.rmSync("./tmp", { recursive: true });
+        fs.rmSync(avatar, { recursive: true });
 
         user = await User.create({
             name,
@@ -43,20 +43,20 @@ export const register = async (req, res) => {
             mobile,
             parentsMob,
             roomNo,
+            branch,
             otp,
             otp_expiry: new Date(Date.now() + process.env.OTP_EXPIRE * 60 * 1000),
 
         });
 
-
-        await sendMail(email, "Verify your account", `Your OTP is ${otp}`);
+        await sendMail(email, "Verify your account", otp,user.name);
 
 
         sendToken(
             res,
             user
             , 201,
-            "OTP sent to your email, plese verify your account"
+            `${(user.name).split(" ")[0]} welcome to QrAtt !`
         );
 
 
@@ -121,10 +121,44 @@ export const login = async (req, res) => {
             res,
             user,
             200,
-            "Login Successful"
+            `Welcome back ${(user.name).split(" ")[0]}` 
 
         );
 
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+export const expoPushToken = async (req, res) => {
+    try {
+
+        const user = await User.findById(req.user._id);
+
+        const { token } = req.body;
+
+        if (token) {
+
+            if(user.token === null){
+                user.token = token;
+                await user.save()
+                return res.status(200).json({ success: true, message: "Token added Successfully" });
+
+            }
+        
+            if(user.token !== token){
+                user.token = token;
+                await user.save()
+                return res.status(200).json({ success: true, message: "Token updated Successfully" });
+            }
+
+            if(user.token === token){
+                return res.status(200).json({ success: true, message: "Token already exist" });
+            }
+        } 
+        
+        return res.status(400).json({ success: false, message: "Token not provided" });
 
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -144,7 +178,6 @@ export const logout = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 }
-
 
 export const getMyProfile = async (req, res) => {
 
@@ -175,7 +208,35 @@ export const updateName = async (req, res) => {
         if (name) user.name = name;
         await user.save()
 
-        res.status(200).json({ success: true, message: "Name Updated Successfully" });
+        // res.status(200).json({ success: true, message: "Name Updated Successfully" ,user});
+        sendToken(
+            res,
+            user,
+            200,
+            `Name updated !`
+        );
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+export const updateRoom = async (req, res) => {
+    try {
+
+        const user = await User.findById(req.user._id);
+
+        const { roomNo } = req.body;
+        if (roomNo) user.roomNo = roomNo;
+        await user.save()
+
+        // res.status(200).json({ success: true, message: "Name Updated Successfully" ,user});
+        sendToken(
+            res,
+            user,
+            200,
+            `Room no updated !`
+        );
 
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -200,7 +261,7 @@ export const updateAvatar = async (req, res) => {
                 crop: "fill"
             });
 
-            fs.rmSync("./tmp", { recursive: true });
+            fs.rmSync(avatar, { recursive: true });
 
             user.avatar = {
                 public_id: mycloud.public_id,
@@ -210,7 +271,13 @@ export const updateAvatar = async (req, res) => {
 
         await user.save()
 
-        res.status(200).json({ success: true, message: "Profile Updated Successfully" });
+        // res.status(200).json({ success: true, message: "Profile Updated Successfully" });
+        sendToken(
+            res,
+            user,
+            201,
+            `Profile Updated Successfully`
+        );
 
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -261,8 +328,7 @@ export const forgetPassword = async (req, res) => {
         user.resetPasswordOtpExpiry = Date.now() + 10 * 60 * 1000;
         await user.save();
 
-        await sendMail(email, "Request for Reseting Otp", `Your OTP is ${otp}`
-        );
+        await sendMailForResetPassword(email, "Request for reseting password", otp,user.name);
 
 
 

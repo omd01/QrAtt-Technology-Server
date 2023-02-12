@@ -4,6 +4,7 @@ import { Teacher } from "../models/teachers.js";
 import fs from "fs";
 import cloudinary from "cloudinary";
 import XLSX from 'xlsx';
+import schedule from "node-schedule";
 import { sendXlsx } from "../utils/sendMail.js";
 
 export const Attend = async (req, res) => {
@@ -17,7 +18,8 @@ export const Attend = async (req, res) => {
         const avatar = req.files.avatar.tempFilePath;
 
         if (process.env.UNIQUE_CODE !== uniqueCode) {
-            return res.status(400).json({ success: false, error: "Wrong QR code" });
+            fs.rmSync(avatar, { recursive: true });
+            return res.status(400).json({ success: false, message: "Use Scaned Wrong QR code!" });
         }
 
         const mycloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -26,7 +28,7 @@ export const Attend = async (req, res) => {
             height: "1080"
         });
 
-        fs.rmSync("./tmp", { recursive: true });
+        fs.rmSync(avatar, { recursive: true });
 
         const att = await Attendence.create({
             userId: user._id,
@@ -39,8 +41,6 @@ export const Attend = async (req, res) => {
                 url: mycloud.secure_url,
             },
             actionAt: new Date()
-            // date: `${new Date().getDate()}:${new Date().getMonth()}:${new Date().getFullYear()}`,
-            // time:`${new Date().getHours()}:${new Date().getMinutes()}:${new Date().getSeconds()}`
         });
 
         if (att) {
@@ -73,10 +73,41 @@ export const getAttendence = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 }
+export const getMyAttendence = async (req, res) => {
 
-//elete Cloud images for Teacher
+    try {
 
-setInterval(async function () {
+        const user = await User.findOne(req.user._id);
+
+        if (!user) {
+            return res.status(400).json({ success: false, message: "Access Denied" });
+        }
+
+        const Olddata = await Attendence.find({})
+
+        var data =[]
+
+        Olddata.forEach(element => {
+            if(element.userId == user._id){
+                data.push({
+                    _id:element._id,
+                    gate:element.gate,
+                    action:element.action,
+                    actionAt:element.actionAt
+                })
+            }
+        });
+
+
+        return res.status(200).json({ success: true, data });
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
+// Delete Cloud images for User ( 1 hour ):---------
+schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
     try {
         var UserData = [];
@@ -105,16 +136,17 @@ setInterval(async function () {
         DltData.forEach(async (element) => {
             await cloudinary.v2.uploader.destroy(element);
         })
+        console.log("teacher");
     }
     catch (error) {
         console.log(error)
     }
 
-}, 60 * 60 * 1000);
+});
 
-//elete Cloud images for User
 
-setInterval(async function () {
+// Delete Cloud images for Teacher (1 hour):------
+schedule.scheduleJob("0 0 */1 * * * ", async () => {
 
     try {
         var UserData = [];
@@ -144,16 +176,17 @@ setInterval(async function () {
             await cloudinary.v2.uploader.destroy(element);
         })
         console.log("user")
+    
     }
     catch (error) {
         console.log(error)
     }
 
-}, 60 * 60 * 1000);
+});
 
-//elete Non Verified account in time
 
-setInterval(async function () {
+//Delete Non Verified account in time (10 minuits):-----
+schedule.scheduleJob("0 */10 * * * * ", async () => {
 
     try {
         const user = await User.find();
@@ -172,16 +205,24 @@ setInterval(async function () {
         console.log(error)
     }
 
-}, 60 * 60 * 1000);
+});
 
+<<<<<<< HEAD:Server/controllers/Attendence.js
 // setInterval(async function () {
 
 //     try {
+=======
+
+//Send XLSX file to teachers (1 Month):-------
+schedule.scheduleJob("0 0 0 0 */1 *", async() =>{
+    try {
+>>>>>>> 0.2.3:controllers/Attendence.js
 
 //         var data = [];
 
 //         const attendence = await Attendence.find();
 
+<<<<<<< HEAD:Server/controllers/Attendence.js
 //         function attTime(date) {
 //             var hours = date.getHours();
 //             var minutes = date.getMinutes();
@@ -193,10 +234,24 @@ setInterval(async function () {
 //             var strTime = `${hours}:${minutes}:${seconds} ${ampm}`;
 //             return strTime;
 //         }
+=======
+        // function attTime(date) {
+        //     var hours = date.getHours();
+        //     var minutes = date.getMinutes();
+        //     var seconds = date.getSeconds();
+        //     var ampm = hours >= 12 ? 'pm' : 'am';
+        //     hours = hours % 12;
+        //     hours = hours ? hours : 12;
+        //     minutes = minutes < 10 ? '0' + minutes : minutes;
+        //     var strTime = `${hours}:${minutes}:${seconds} ${ampm}`;
+        //     return strTime;
+        // }
+>>>>>>> 0.2.3:controllers/Attendence.js
     
 
 //         attendence.forEach((item, index) => {
 
+<<<<<<< HEAD:Server/controllers/Attendence.js
 //             data[index] = {
 //                 Id: item.userId,
 //                 Name: item.name,
@@ -207,6 +262,18 @@ setInterval(async function () {
 //                 UniqueCode: item.uniqueCode,
 //                 Selfi: item.selfi.url
 //             }
+=======
+            data[index] = {
+                Id: item.userId,
+                Name: item.name,
+                Gate: item.gate,
+                Action: item.action,
+                Date: item.actionAt.toLocaleDateString(),
+                Time: item.actionAt.toLocaleTimeString(),
+                UniqueCode: item.uniqueCode,
+                Selfi: item.selfi.url
+            }
+>>>>>>> 0.2.3:controllers/Attendence.js
 
 //         });
 
@@ -216,6 +283,7 @@ setInterval(async function () {
 //         fs.mkdirSync("xlsx", (err) => console.log(err))
 //         XLSX.writeFile(workBook, "xlsx/sheet1.xlsx")
 
+<<<<<<< HEAD:Server/controllers/Attendence.js
 //       //  await sendXlsx()
 
 //          fs.rmSync("./xlsx",{recursive:true})
@@ -225,4 +293,16 @@ setInterval(async function () {
 //     }
 
 // }, 10 * 1000);
+=======
+        await sendXlsx()
+        fs.rmSync("./xlsx",{recursive:true})
+
+         console.log("XLSX");
+    }
+    catch (error) {
+        console.log(error)
+    }
+
+})
+>>>>>>> 0.2.3:controllers/Attendence.js
 

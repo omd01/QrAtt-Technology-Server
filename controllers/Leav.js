@@ -1,27 +1,34 @@
 import { Leav } from "../models/leav.js";
 import { Teacher } from "../models/teachers.js";
 import { User } from "../models/users.js";
+import axios from "axios";
 
 export const newLeav = async (req, res) => {
 
     try {
 
-        const { teacher, reason } = req.body;
+        const { teacher, reason,from,to } = req.body;
+        const AssignedTeacher = await Teacher.findById(teacher);
         const user = await User.findById(req.user._id);
-
         const leav = await Leav.create({
             userId: user._id,
             name: user.name,
             teacher,
             reason,
-            from: new Date(Date.now()),
-            to: new Date(Date.now(5 * 24 * 60 * 60 * 1000)),
+            from ,
+            to,
             status: "pending",
             createdAt: new Date(Date.now()),
 
         });
         if (leav) {
             res.status(200).json({ success: true, message: "Leav Request sent successfully " });
+
+            await axios.post("https://exp.host/--/api/v2/push/send", {
+                to: AssignedTeacher.token,
+                title: "🟡 New Leave Request",
+                body: "You have a new leave request from " + user.name,
+            })
         }
 
 
@@ -45,7 +52,7 @@ export const myLeav = async (req, res) => {
                   return res.status(200).json({ success: true, message:"Success",data:leav});
 
                 }
-                return res.status(400).json({ success: false, message: "You Do Not Have Any Requests" });
+                return res.status(200).json({ success: false});
 
             }
 
@@ -55,7 +62,7 @@ export const myLeav = async (req, res) => {
         if (leav[0]) {
            return res.status(200).json({ success: true, message:"Success",data:leav});
         }
-        return res.status(400).json({ success: false, message: "You Do Not Have Any Requests" });
+        return res.status(200).json({ success: true,data:[],message:null});
         
        
 
@@ -95,17 +102,25 @@ export const approveLeav = async (req, res) => {
     try {
 
         const { leavId } = req.params;
-
-       
+  
         const user = await Teacher.findById(req.user._id);
 
 
         if (user.isTeacher) {
             const leav = await Leav.findById(leavId);
+            const student = await User.findById(leav.userId);
             if (leav) {
                 leav.status = "approved";
                 await leav.save();
+
+                await axios.post("https://exp.host/--/api/v2/push/send", {
+                    to: student.token,
+                    title: "🟢 Leave Request Approved ",
+                    body: "Your leave request was approved by " + user.name,
+                })
+                
                 return res.status(200).json({ success: true, message: "Request Approved" });
+
             }
             return res.status(400).json({ success: false, message: "Cannot Find Request" });
         };
@@ -133,8 +148,14 @@ export const rejectLeav = async (req, res) => {
         };
 
         if (leav) {
+            const student = await User.findById(leav.userId);
             leav.status = "rejected";
             await leav.save();
+            await axios.post("https://exp.host/--/api/v2/push/send", {
+                    to: student.token,
+                    title: "🔴 Leave Request Rejected ",
+                    body: "Your leave request was rejected by " + user.name,
+                })
             return res.status(200).json({ success: true, message: "Request Rejected" });
         }
 
