@@ -411,16 +411,6 @@ export const getSpecificUser = async (req, res) => {
             ]
         });
 
-    
-        
-
-        // const att = await Attendence.find({
-        //     $or: [
-        //         { userId: { $regex: data[0]._id, $options: "i" } },
-        //     ]
-        // });
-
-        // console.log(att);
 
         res.status(200).json({ success: true ,data});
 
@@ -429,6 +419,7 @@ export const getSpecificUser = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 }
+
 
 // ADMIN ACCESS
 
