@@ -1,6 +1,6 @@
 import express from 'express'; 
 
-import { AdminLogin, AdminReg, getUser, TexpoPushToken, TforgetPassword, TgetMyProfile, Tlogin, Tregister, TresetPassword, TupdateAvatar, TupdateName, TupdatePassword, Tverify, verifyTeacher } from '../controllers/Teacher.js';
+import { AdminLogin, AdminReg, getSpecificUser, getUser, TexpoPushToken, TforgetPassword, TgetMyProfile, Tlogin, Tregister, TresetPassword, TupdateAvatar, TupdateName, TupdatePassword, Tverify, verifyTeacher } from '../controllers/Teacher.js';
 
 import { isAuthenticated } from '../middlewares/auth.js';
 
@@ -19,6 +19,7 @@ router.route("/updatepassword").put(isAuthenticated , TupdatePassword);
 router.route("/forgetpassword").post(TforgetPassword); 
 router.route("/resetpassword").post(TresetPassword); 
 router.route("/getuser").get(isAuthenticated,getUser);
+router.route("/getspecificuser").get(isAuthenticated,getSpecificUser);
 router.route("/admin").post(AdminReg); 
 router.route("/admin/login").post(AdminLogin); 
 router.route("/admin/verify/:teacherId").get(isAuthenticated , verifyTeacher); 

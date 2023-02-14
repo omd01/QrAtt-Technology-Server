@@ -384,6 +384,28 @@ export const getUser = async (req, res) => {
     }
 }
 
+export const getSpecificUser = async (req, res) => {
+    
+    try {
+        const user = await Teacher.findById(req.user._id);
+        if (!user.isTeacher) {
+            return res.status(400).json({ success: false, message: "You are not able to access this" });
+        }
+
+
+        const data = await User.find({
+            $or: [
+                { name: { $regex: req.params.key, $options: "i" } },
+            ]
+        });
+
+        res.status(200).json({ success: true ,data});
+
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
 
 // ADMIN ACCESS
 
