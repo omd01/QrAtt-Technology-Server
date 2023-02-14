@@ -40,6 +40,7 @@ export const Attend = async (req, res) => {
                 public_id: mycloud.public_id,
                 url: mycloud.secure_url,
             },
+            
             actionAt: new Date()
         });
 
@@ -73,6 +74,7 @@ export const getAttendence = async (req, res) => {
         res.status(400).json({ success: false, message: error.message });
     }
 }
+
 export const getMyAttendence = async (req, res) => {
 
     try {

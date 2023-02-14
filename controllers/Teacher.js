@@ -7,9 +7,7 @@ import fs from "fs";
 import { User } from "../models/users.js";
 import { Admin } from "../models/admin.js";
 
-
-
-export const Tregister = async (req, res) => {
+export const register = async (req, res) => {
 
     try {
 
@@ -76,7 +74,7 @@ export const Tregister = async (req, res) => {
     }
 }
 
-export const Tverify = async (req, res) => {
+export const verify = async (req, res) => {
     try {
         const { link } = req.params;
 
@@ -100,7 +98,7 @@ export const Tverify = async (req, res) => {
     }
 }
 
-export const Tlogin = async (req, res) => {
+export const login = async (req, res) => {
 
     try {
 
@@ -141,7 +139,7 @@ export const Tlogin = async (req, res) => {
     }
 }
 
-export const TexpoPushToken = async (req, res) => {
+export const expoPushToken = async (req, res) => {
     try {
 
         const user = await Teacher.findById(req.user._id);
@@ -175,7 +173,7 @@ export const TexpoPushToken = async (req, res) => {
     }
 }
 
-export const TgetMyProfile = async (req, res) => {
+export const getMyProfile = async (req, res) => {
 
     try {
 
@@ -194,7 +192,7 @@ export const TgetMyProfile = async (req, res) => {
     }
 }
 
-export const TupdateName = async (req, res) => {
+export const updateName = async (req, res) => {
     try {
 
         const user = await Teacher.findById(req.user._id);
@@ -210,7 +208,7 @@ export const TupdateName = async (req, res) => {
     }
 }
 
-export const TupdateAvatar = async (req, res) => {
+export const updateAvatar = async (req, res) => {
     try {
 
         const user = await Teacher.findById(req.user._id);
@@ -245,7 +243,7 @@ export const TupdateAvatar = async (req, res) => {
     }
 }
 
-export const TupdatePassword = async (req, res) => {
+export const updatePassword = async (req, res) => {
     try {
 
         const user = await Teacher.findById(req.user._id).select("+password");
@@ -273,7 +271,7 @@ export const TupdatePassword = async (req, res) => {
     }
 }
 
-export const TforgetPassword = async (req, res) => {
+export const forgetPassword = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await Teacher.findOne({ email });
@@ -301,7 +299,7 @@ export const TforgetPassword = async (req, res) => {
     }
 }
 
-export const TresetPassword = async (req, res) => {
+export const resetPassword = async (req, res) => {
     try {
         const { otp, newPassword } = req.body;
         const user = await Teacher.findOne({
