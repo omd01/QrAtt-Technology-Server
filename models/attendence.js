@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
         url: String,
     },
 
+    status:{
+        type: String,
+        default: "pending",
+    },
     actionAt:{
         type:Date,
         default: Date.now

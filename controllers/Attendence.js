@@ -6,10 +6,18 @@ import cloudinary from "cloudinary";
 import XLSX from 'xlsx';
 import schedule from "node-schedule";
 import { sendXlsx } from "../utils/sendMail.js";
+import axios from "axios";
 
 export const Attend = async (req, res) => {
 
     try {
+
+        const allTeacher = await Teacher.find({ isTeacher: true });
+        var teacherDevices = []
+
+        allTeacher.map((item)=>{
+            teacherDevices.push(item.token)
+        })
 
         const user = await User.findOne(req.user._id);
 
@@ -18,8 +26,32 @@ export const Attend = async (req, res) => {
         const avatar = req.files.avatar.tempFilePath;
 
         if (process.env.UNIQUE_CODE !== uniqueCode) {
+
             fs.rmSync(avatar, { recursive: true });
-            return res.status(400).json({ success: false, message: "Use Scaned Wrong QR code!" });
+
+            const failed_att = await Attendence.create({
+                userId: user._id,
+                name: user.name,
+                gate,
+                action,
+                uniqueCode,
+                selfi: {
+                    public_id:null,
+                    url:null,
+                },
+                status:"failed",
+                actionAt: new Date()
+            });
+            if(failed_att){
+                await axios.post("https://exp.host/--/api/v2/push/send", {
+                    to: teacherDevices,
+                    title: "❌ wrong Qr scaned",
+                    body: "suspicious activity deteced by" + user.name,
+                    channelId:'wrong_qr'
+                })
+                return res.status(400).json({ success: false, message: "Use Scaned Wrong QR code!" });
+            }
+
         }
 
         const mycloud = await cloudinary.v2.uploader.upload(avatar, {
@@ -40,7 +72,7 @@ export const Attend = async (req, res) => {
                 public_id: mycloud.public_id,
                 url: mycloud.secure_url,
             },
-            
+            status:"success",
             actionAt: new Date()
         });
 
@@ -48,7 +80,7 @@ export const Attend = async (req, res) => {
             return res.status(200).json({ success: true, message: `${action} Success!` });
         }
 
-        res.status(400).json({ success: false, message: `Use Scaned Wrong QR code!` });
+        res.status(400).json({ success: false, message: `Somthing went wrong please try again or scan correct QR code` });
 
 
     } catch (error) {
