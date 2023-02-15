@@ -127,7 +127,8 @@ export const getMyAttendence = async (req, res) => {
                     _id:element._id,
                     gate:element.gate,
                     action:element.action,
-                    actionAt:element.actionAt
+                    actionAt:element.actionAt,
+                    status:element.status
                 })
             }
         });
