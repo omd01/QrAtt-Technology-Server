@@ -46,7 +46,7 @@ export const Attend = async (req, res) => {
                 await axios.post("https://exp.host/--/api/v2/push/send", {
                     to: teacherDevices,
                     title: "❌ wrong Qr scaned",
-                    body: "suspicious activity deteced by" + user.name,
+                    body: `suspicious activity deteced by ${user.name}`,
                     channelId:'wrong_qr'
                 })
                 return res.status(400).json({ success: false, message: "Use Scaned Wrong QR code!" });
