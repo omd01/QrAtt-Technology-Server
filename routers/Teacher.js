@@ -16,6 +16,7 @@ import {
   updatePassword,
   verify,
   verifyTeacher,
+  getUserById,
 } from "../controllers/Teacher.js";
 
 import { isAuthenticated } from "../middlewares/auth.js";
@@ -35,7 +36,7 @@ router.route("/forgetpassword").post(forgetPassword);
 router.route("/resetpassword").post(resetPassword);
 router.route("/getuser").get(isAuthenticated, getUser);
 router.route("/getspecificuser").get(isAuthenticated, getSpecificUser);
-
+router.route("/getuserbyid/:userid").get(isAuthenticated, getUserById);
 router.route("/admin").post(AdminReg);
 router.route("/admin/login").post(AdminLogin);
 router.route("/admin/verify/:teacherId").get(isAuthenticated, verifyTeacher);

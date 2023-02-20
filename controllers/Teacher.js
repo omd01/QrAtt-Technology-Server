@@ -382,6 +382,28 @@ export const getUser = async (req, res) => {
     }
 }
 
+export const getUserById = async (req, res) => {
+    try {
+
+       
+
+        const {userid} = req.params;
+
+        const user = await Teacher.findById(req.user._id);
+        if (!user.isTeacher) {
+            return res.status(400).json({ success: false, message: "You are not able to access this" });
+        }
+
+        const userData = await User.findById(userid);
+        
+        res.status(200).json({ success: true, userData });
+
+
+    } catch (error) {
+        res.status(400).json({ success: false, message: error.message });
+    }
+}
+
 export const getSpecificUser = async (req, res) => {
     
     try {
