@@ -46,6 +46,11 @@ const userSchema = new mongoose.Schema({
         type:String,
         require:true,
     },
+    gender:{
+        type:String,
+        require:true,
+    },
+
 
     createdAt: {
         type: Date,
