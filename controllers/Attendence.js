@@ -215,7 +215,7 @@ export const getAnalytics = async (req, res) => {
       { main_gate_boys_chcek_in },
       { main_gate_boys_chcek_out },
     ];
-    
+
     girls_data = [
       { hostel_girls_chcek_in },
       { hostel_girls_chcek_out },
@@ -229,124 +229,124 @@ export const getAnalytics = async (req, res) => {
   }
 };
 
-// // Delete Cloud images for User ( 1 hour ):---------
-// schedule.scheduleJob("0 0 */1 * * * ", async () => {
-//   try {
-//     var UserData = [];
-//     var CloudData = [];
-//     const result = await cloudinary.v2.api.resources({
-//       type: "upload",
-//       prefix: "QrAtt/user",
-//     });
+// Delete Cloud images for User ( 1 hour ):---------
+schedule.scheduleJob("0 0 */1 * * * ", async () => {
+  try {
+    var UserData = [];
+    var CloudData = [];
+    const result = await cloudinary.v2.api.resources({
+      type: "upload",
+      prefix: "QrAtt/user",
+    });
 
-//     if (result) {
-//       result.resources.forEach((element) => {
-//         CloudData.push(element.public_id);
-//       });
+    if (result) {
+      result.resources.forEach((element) => {
+        CloudData.push(element.public_id);
+      });
 
-//       const user = await User.find();
-//       user.forEach((element) => {
-//         UserData.push(element.avatar.public_id);
-//       });
-//     }
-//     const DltData = CloudData.filter((link) => {
-//       return !UserData.find((element) => {
-//         return element === link;
-//       });
-//     });
-//     DltData.forEach(async (element) => {
-//       await cloudinary.v2.uploader.destroy(element);
-//     });
-//     console.log("teacher");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+      const user = await User.find();
+      user.forEach((element) => {
+        UserData.push(element.avatar.public_id);
+      });
+    }
+    const DltData = CloudData.filter((link) => {
+      return !UserData.find((element) => {
+        return element === link;
+      });
+    });
+    DltData.forEach(async (element) => {
+      await cloudinary.v2.uploader.destroy(element);
+    });
+    console.log("teacher");
+  } catch (error) {
+    console.log(error);
+  }
+});
 
-// // Delete Cloud images for Teacher (1 hour):------
-// schedule.scheduleJob("0 0 */1 * * * ", async () => {
-//   try {
-//     var UserData = [];
-//     var CloudData = [];
-//     const result = await cloudinary.v2.api.resources({
-//       type: "upload",
-//       prefix: "QrAtt/teacher",
-//     });
+// Delete Cloud images for Teacher (1 hour):------
+schedule.scheduleJob("0 0 */1 * * * ", async () => {
+  try {
+    var UserData = [];
+    var CloudData = [];
+    const result = await cloudinary.v2.api.resources({
+      type: "upload",
+      prefix: "QrAtt/teacher",
+    });
 
-//     if (result) {
-//       result.resources.forEach((element) => {
-//         CloudData.push(element.public_id);
-//       });
+    if (result) {
+      result.resources.forEach((element) => {
+        CloudData.push(element.public_id);
+      });
 
-//       const user = await Teacher.find();
-//       user.forEach((element) => {
-//         UserData.push(element.avatar.public_id);
-//       });
-//     }
-//     const DltData = CloudData.filter((link) => {
-//       return !UserData.find((element) => {
-//         return element === link;
-//       });
-//     });
-//     DltData.forEach(async (element) => {
-//       await cloudinary.v2.uploader.destroy(element);
-//     });
-//     console.log("user");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+      const user = await Teacher.find();
+      user.forEach((element) => {
+        UserData.push(element.avatar.public_id);
+      });
+    }
+    const DltData = CloudData.filter((link) => {
+      return !UserData.find((element) => {
+        return element === link;
+      });
+    });
+    DltData.forEach(async (element) => {
+      await cloudinary.v2.uploader.destroy(element);
+    });
+    console.log("user");
+  } catch (error) {
+    console.log(error);
+  }
+});
 
-// //Delete Non Verified account in time (10 minuits):-----
-// schedule.scheduleJob("0 */10 * * * * ", async () => {
-//   try {
-//     const user = await User.find();
-//     user.forEach((element) => {
-//       if (!element.verified) {
-//         if (element.otp_expiry < new Date(Date.now())) {
-//           async function dlt() {
-//             await User.findByIdAndRemove(element._id);
-//           }
-//           dlt();
-//         }
-//       }
-//     });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+//Delete Non Verified account in time (10 minuits):-----
+schedule.scheduleJob("0 */10 * * * * ", async () => {
+  try {
+    const user = await User.find();
+    user.forEach((element) => {
+      if (!element.verified) {
+        if (element.otp_expiry < new Date(Date.now())) {
+          async function dlt() {
+            await User.findByIdAndRemove(element._id);
+          }
+          dlt();
+        }
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
-// //Send XLSX file to teachers (1 Month):-------
-// schedule.scheduleJob("0 0 0 0 */1 *", async () => {
-//   try {
-//     var data = [];
+//Send XLSX file to teachers (1 Month):-------
+schedule.scheduleJob("0 0 0 0 */1 *", async () => {
+  try {
+    var data = [];
 
-//     const attendence = await Attendence.find();
+    const attendence = await Attendence.find();
 
-//     attendence.forEach((item, index) => {
-//       data[index] = {
-//         Id: item.userId,
-//         Name: item.name,
-//         Gate: item.gate,
-//         Action: item.action,
-//         Date: item.actionAt.toLocaleDateString(),
-//         Time: item.actionAt.toLocaleTimeString(),
-//         UniqueCode: item.uniqueCode,
-//         Selfi: item.selfi.url,
-//       };
-//     });
+    attendence.forEach((item, index) => {
+      data[index] = {
+        Id: item.userId,
+        Name: item.name,
+        Gate: item.gate,
+        Action: item.action,
+        Date: item.actionAt.toLocaleDateString(),
+        Time: item.actionAt.toLocaleTimeString(),
+        UniqueCode: item.uniqueCode,
+        Selfi: item.selfi.url,
+      };
+    });
 
-//     const workSheet = XLSX.utils.json_to_sheet(data);
-//     const workBook = XLSX.utils.book_new();
-//     XLSX.utils.book_append_sheet(workBook, workSheet, "attendence");
-//     fs.mkdirSync("xlsx", (err) => console.log(err));
-//     XLSX.writeFile(workBook, "xlsx/sheet1.xlsx");
+    const workSheet = XLSX.utils.json_to_sheet(data);
+    const workBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, "attendence");
+    fs.mkdirSync("xlsx", (err) => console.log(err));
+    XLSX.writeFile(workBook, "xlsx/sheet1.xlsx");
 
-//     await sendXlsx();
-//     fs.rmSync("./xlsx", { recursive: true });
+    await sendXlsx();
+    fs.rmSync("./xlsx", { recursive: true });
 
-//     console.log("XLSX");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+    console.log("XLSX");
+  } catch (error) {
+    console.log(error);
+  }
+});
