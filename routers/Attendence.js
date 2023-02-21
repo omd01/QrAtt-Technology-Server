@@ -1,5 +1,5 @@
 import express from 'express'; 
-import { Attend, getAttendence, getMyAttendence } from '../controllers/Attendence.js';
+import { Attend, getAnalytics, getAttendence, getMyAttendence } from '../controllers/Attendence.js';
 import { isAuthenticated } from '../middlewares/auth.js';
 const router = express.Router();
 
@@ -7,6 +7,8 @@ const router = express.Router();
 router.route("/new").post(isAuthenticated ,Attend); 
 router.route("/getattendence").get(isAuthenticated ,getAttendence); 
 router.route("/getmyattendence").get(isAuthenticated ,getMyAttendence); 
+router.route("/getanalytics").get(isAuthenticated ,getAnalytics); 
+
 
 
 export default router;

@@ -36,6 +36,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "pending",
     },
+    gender:{
+        type: String,
+        required: true,
+    },
     actionAt:{
         type:Date,
         default: Date.now
