@@ -13,6 +13,7 @@ export const newLeav = async (req, res) => {
         const leav = await Leav.create({
             userId: user._id,
             name: user.name,
+            avatar: user.avatar.url,
             mobile: user.mobile,
             parentsMobile: user.parentsMob,
             roomNo: user.roomNo,
