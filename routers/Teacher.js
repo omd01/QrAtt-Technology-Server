@@ -35,7 +35,7 @@ router.route("/updatepassword").put(isAuthenticated, updatePassword);
 router.route("/forgetpassword").post(forgetPassword);
 router.route("/resetpassword").post(resetPassword);
 router.route("/getuser").get(isAuthenticated, getUser);
-router.route("/getspecificuser").get(isAuthenticated, getSpecificUser);
+router.route("/getspecificuser/:key").get(isAuthenticated, getSpecificUser);
 router.route("/getuserbyid/:userid").get(isAuthenticated, getUserById);
 router.route("/admin").post(AdminReg);
 router.route("/admin/login").post(AdminLogin);
