@@ -166,6 +166,7 @@ export const getAnalytics = async (req, res) => {
 
     allAttendance.forEach((element) => {
       if (JSON.stringify(element.actionAt).split("T")[0].slice(1) === today) {
+        if(element.status === "success"){
         if (element.gender === "male") {
           if (element.gate === "Hostel Gate" && element.action === "check-in") {
             hostel_boys_chcek_in = hostel_boys_chcek_in + 1;
@@ -205,7 +206,7 @@ export const getAnalytics = async (req, res) => {
           ) {
             main_gate_girls_chcek_out = main_gate_girls_chcek_out + 1;
           }
-        }
+        }}
       }
     });
 
