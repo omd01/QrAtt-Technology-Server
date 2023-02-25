@@ -57,7 +57,7 @@ export const myLeav = async (req, res) => {
                   return res.status(200).json({ success: true, message:"Success",data:leav});
 
                 }
-                return res.status(200).json({ success: false});
+                return res.status(200).json({ success: true,data:[]});
 
             }
 
