@@ -25,7 +25,7 @@ const router = express.Router();
 
 // Teacher
 router.route("/register").post(register);
-router.route("/verify/:link").get(isAuthenticated, verify);
+router.route("/verify").post(isAuthenticated, verify);
 router.route("/login").post(login);
 router.route("/setexpotoken").put(isAuthenticated, expoPushToken);
 router.route("/me").get(isAuthenticated, getMyProfile);
